@@ -60,6 +60,7 @@ while True:
     game_field[x_coor][y_coor * 2] = "O"
     print_field(game_field)
 
+    # rules
     for i in range(1, 4):
         row = game_field[i]
         if row[2] == " " or row[4] == " " or row[6] == " ":
@@ -95,10 +96,12 @@ while True:
     if victory is True:
         break
 
-    if game_field[1][2] == game_field[2][4] == game_field[3][6] == "X" or game_field[1][6] == game_field[2][4] == game_field[3][2] == "X":
+    if game_field[1][2] == game_field[2][4] == game_field[3][6] == "X" or \
+            game_field[1][6] == game_field[2][4] == game_field[3][2] == "X":
         print("X wins")
         break
 
-    elif game_field[1][2] == game_field[2][4] == game_field[3][6] == "O" or game_field[1][6] == game_field[2][4] == game_field[3][2] == "O":
+    elif game_field[1][2] == game_field[2][4] == game_field[3][6] == "O" or \
+            game_field[1][6] == game_field[2][4] == game_field[3][2] == "O":
         print("O wins")
         break
