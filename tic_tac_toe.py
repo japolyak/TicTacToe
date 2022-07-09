@@ -1,133 +1,104 @@
-cells = input("Enter the cells: ")
+from random import randrange
 
 
-def x_or_o(inp):
-    x_list_o = []
-    for e in inp:
-        if e == "X":
-            x_list_o.append(e)
-        elif e == "O":
-            x_list_o.append(e)
-        else:
-            x_list_o.append(" ")
-    return x_list_o
-
-
-def start_matrix(a):
-    game_field = [["-", "-", "-", "-", "-", "-", "-", "-", "-"],
-                  ["|", " ", " ", " ", " ", " ", " ", " ", "|"],
-                  ["|", " ", " ", " ", " ", " ", " ", " ", "|"],
-                  ["|", " ", " ", " ", " ", " ", " ", " ", "|"],
-                  ["-", "-", "-", "-", "-", "-", "-", "-", "-"]]
-
-    n = 0
-    xo = x_or_o(a)
-
-    for it in range(1, 4):
-        for e in range(2, 7, 2):
-            game_field[it][e] = xo[n]
-            n += 1
-    return game_field
-
-
-def print_field(nest_list):
+def print_field(field):  # printing gamefield
     for k in range(0, 9):
-        print(nest_list[0][k], end='')
+        print(field[0][k], end='')
     print()
 
     for e in range(1, 4):
         for k in range(0, 9):
-            print(nest_list[e][k], sep='', end='')
+            print(field[e][k], sep='', end='')
         print()
 
     for k in range(0, 9):
-        print(nest_list[4][k], end='')
+        print(field[4][k], end='')
     print()
 
 
-start_field = start_matrix(cells)
-print_field(start_field)
+game_field = [["-", "-", "-", "-", "-", "-", "-", "-", "-"],
+              ["|", " ", " ", " ", " ", " ", " ", " ", "|"],
+              ["|", " ", " ", " ", " ", " ", " ", " ", "|"],
+              ["|", " ", " ", " ", " ", " ", " ", " ", "|"],
+              ["-", "-", "-", "-", "-", "-", "-", "-", "-"]]
+
+
+print_field(game_field)
 
 while True:
     coor = input("Enter the coordinates: ")
 
     try:
-        first = int(coor[0])
-        second = int(coor[2])
+        x_move = int(coor[0])
+        y_move = int(coor[2])
     except ValueError:
         print("You should enter numbers!")
         continue
 
-    if first < 1 or second < 1:
+    if x_move < 1 or y_move < 1:
         print("Coordinates should be from 1 to 3!")
         continue
-    elif first > 3 or second > 3:
+    elif x_move > 3 or y_move > 3:
         print("Coordinates should be from 1 to 3!")
         continue
 
-    if start_field[first][second * 2] == "X" or start_field[first][second * 2] == "O":
+    if game_field[x_move][y_move * 2] == "X" or game_field[x_move][y_move * 2] == "O":
         print("This cell is occupied! Choose another one!")
         continue
 
-    x_count = 0
-    o_count = 0
+    game_field[x_move][y_move * 2] = "X"
+    print_field(game_field)
+
+    print("Making move level \"easy\"")
+    x_coor = randrange(1, 4)
+    y_coor = randrange(1, 4)
+
+    while x_coor == x_move and y_coor == y_move:
+        x_coor = randrange(1, 4)
+        y_coor = randrange(1, 4)
+
+    game_field[x_coor][y_coor * 2] = "O"
+    print_field(game_field)
 
     for i in range(1, 4):
-        for j in range(2, 7, 2):
+        row = game_field[i]
+        if row[2] == " " or row[4] == " " or row[6] == " ":
+            victory = False
+            pass
+        else:
+            if row[2] == row[4] == row[6] == "X":
+                victory = True
+                print("X wins")
+                break
+            elif row[2] == row[4] == row[6] == "O":
+                victory = True
+                print("O wins")
+                break
 
-            if start_field[i][j] == "X":
-                x_count += 1
+    if victory is True:
+        break
 
-            elif start_field[i][j] == "O":
-                o_count += 1
+    for i in range(2, 7, 2):
+        if game_field[1][i] == " " or game_field[2][i] == " " or game_field[3][i] == " ":
+            victory = False
+            pass
+        else:
+            if game_field[2] == game_field[4] == game_field[6] == "X":
+                victory = True
+                print("X wins")
+                break
+            elif game_field[2] == game_field[4] == game_field[6] == "O":
+                victory = True
+                print("O wins")
+                break
 
-    if x_count > o_count:
-        start_field[first][second * 2] = "O"
-    else:
-        start_field[first][second * 2] = "X"
+    if victory is True:
+        break
 
-    print_field(start_field)
+    if game_field[1][2] == game_field[2][4] == game_field[3][6] == "X" or game_field[1][6] == game_field[2][4] == game_field[3][2] == "X":
+        print("X wins")
+        break
 
-    rule = True
-
-    for i in range(1, 4):
-        row = start_field[i]
-        diag = start_field
-
-        if diag[1][2] == diag[2][4] == diag[3][6] == "X" or diag[1][6] == diag[2][4] == diag[3][2] == "X":
-            print("X wins")
-            rule = False
-            break
-
-        elif diag[1][2] == diag[2][4] == diag[3][6] == "O" or diag[1][6] == diag[2][4] == diag[3][2] == "O":
-            print("O wins")
-            rule = False
-            break
-
-        elif row[2] == row[4] == row[6] == "X":
-            print("X wins")
-            rule = False
-            break
-
-        elif row[2] == row[4] == row[6] == "O":
-            print("O wins")
-            rule = False
-            break
-
-    if rule:
-        for i in range(1, 4):
-            row = start_field[i]
-
-            for j in range(2, 7, 2):
-                if row[j] == " ":
-                    print("Game not finished")
-                    rule = False
-                    break
-
-        if rule:
-            print("Draw")
-            break
-
-    break
-
-# dev branch
+    elif game_field[1][2] == game_field[2][4] == game_field[3][6] == "O" or game_field[1][6] == game_field[2][4] == game_field[3][2] == "O":
+        print("O wins")
+        break
