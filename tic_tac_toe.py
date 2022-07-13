@@ -1,63 +1,70 @@
 from random import randrange
 
-game_field = [["-", "-", "-", "-", "-", "-", "-", "-", "-"],
+
+class GameState:
+    game_field = [["-", "-", "-", "-", "-", "-", "-", "-", "-"], # change to the second emils version
               ["|", " ", " ", " ", " ", " ", " ", " ", "|"],
               ["|", " ", " ", " ", " ", " ", " ", " ", "|"],
               ["|", " ", " ", " ", " ", " ", " ", " ", "|"],
               ["-", "-", "-", "-", "-", "-", "-", "-", "-"]]
 
 
-while True:
-    begin = input("Input command: ").split()
+    # game_field = [
+    #     ["", "", ""],
+    #     ["", "", ""],
+    #     ["", "", ""],
+    # ]
 
-    if begin[0] == "exit":
-        begin = ['', '', '']
+    move_count = 0
+
+
+while True:
+    params = input("Input command: ").split()
+
+    if params[0] == "exit":
+        params = ['', '', '']
         break
 
-    elif len(begin) != 3:
+    elif len(params) != 3:
         print("Bad parameters!")
         continue
 
     break
 
 
-def print_field(field):  # printing gamefield
+def print_field(state):  # printing gamefield
     for k in range(0, 9):
-        print(field[0][k], end='')
+        print(state.game_field[0][k], end='')
     print()
 
     for e in range(1, 4):
         for k in range(0, 9):
-            print(field[e][k], sep='', end='')
+            print(state.game_field[e][k], sep='', end='')
         print()
 
     for k in range(0, 9):
-        print(field[4][k], end='')
+        print(state.game_field[4][k], end='')
     print()
 
 
-def easy_move(field):  # computers move on easy level
+def easy_move(state):  # computers move on easy level
     print("Making move level \"easy\"")
     x_coor = randrange(1, 4)
     y_coor = randrange(1, 4)
 
-    global moves_count
-
-    while field[x_coor][y_coor * 2] == "X" or field[x_coor][y_coor * 2] == "O":
+    while state.game_field[x_coor][y_coor * 2] == "X" or state.game_field[x_coor][y_coor * 2] == "O":
         x_coor = randrange(1, 4)
         y_coor = randrange(1, 4)
 
-    if moves_count % 2 == 1:
-        field[x_coor][y_coor * 2] = "O"
-        print_field(field)
-        moves_count += 1
+    if state.move_count % 2 == 1:
+        state.game_field[x_coor][y_coor * 2] = "O"
+        print_field(state)
     else:
-        field[x_coor][y_coor * 2] = "X"
-        print_field(field)
-        moves_count += 1
+        state.game_field[x_coor][y_coor * 2] = "X"
+        print_field(state)
 
 
-def first_user_move(field):
+def user_move(state):
     while True:
         coor = input("Enter the coordinates: ")
 
@@ -75,65 +82,26 @@ def first_user_move(field):
             print("Coordinates should be from 1 to 3!")
             continue
 
-        if field[x_move][y_move * 2] == "X" or field[x_move][y_move * 2] == "O":
+        if state.game_field[x_move][y_move * 2] == "X" or state.game_field[x_move][y_move * 2] == "O":
             print("This cell is occupied! Choose another one!")
             continue
 
-        field[x_move][y_move * 2] = "X"
-        break
-
-
-def user_move(field):
-    global moves_count
-    while True:
-        coor = input("Enter the coordinates: ")
-
-        try:
-            x_move = int(coor[0])
-            y_move = int(coor[2])
-        except ValueError:
-            print("You should enter numbers!")
-            continue
-
-        if x_move < 1 or y_move < 1:
-            print("Coordinates should be from 1 to 3!")
-            continue
-        elif x_move > 3 or y_move > 3:
-            print("Coordinates should be from 1 to 3!")
-            continue
-
-        if field[x_move][y_move * 2] == "X" or field[x_move][y_move * 2] == "O":
-            print("This cell is occupied! Choose another one!")
-            continue
-
-        if moves_count % 2 == 1:
-            field[x_move][y_move * 2] = "O"
-            print_field(field)
-            moves_count += 1
+        if state.move_count % 2 == 1:
+            state.game_field[x_move][y_move * 2] = "O"
+            print_field(state)
             break
         else:
-            field[x_move][y_move * 2] = "X"
-            print_field(field)
-            moves_count += 1
+            state.game_field[x_move][y_move * 2] = "X"
+            print_field(state)
             break
 
 
-def easy_first_move(field):
-    print_field(field)
-
-    print("Making move level \"easy\"")
-    first_x_move = randrange(1, 4)
-    first_y_move = randrange(1, 4)
-    field[first_x_move][first_y_move * 2] = "X"
-    print_field(field)
-
-
-def victory_rules(field):
-    global victory
+def victory_rules(state): # bug with vertical rule
+    victory = False
     while True:
 
         for i in range(1, 4):
-            row = field[i]
+            row = state.game_field[i]
             if row[2] == " " or row[4] == " " or row[6] == " ":
                 victory = False
                 pass
@@ -151,15 +119,15 @@ def victory_rules(field):
             break
 
         for i in range(2, 7, 2):
-            if field[1][i] == " " or field[2][i] == " " or field[3][i] == " ":
+            if state.game_field[1][i] == " " or state.game_field[2][i] == " " or state.game_field[3][i] == " ":
                 victory = False
                 pass
             else:
-                if field[2] == field[4] == field[6] == "X":
+                if state.game_field[2] == state.game_field[4] == state.game_field[6] == "X":
                     victory = True
                     print("X wins")
                     break
-                elif field[2] == field[4] == field[6] == "O":
+                elif state.game_field[2] == state.game_field[4] == state.game_field[6] == "O":
                     victory = True
                     print("O wins")
                     break
@@ -167,85 +135,51 @@ def victory_rules(field):
         if victory is True:
             break
 
-        if field[1][2] == field[2][4] == field[3][6] == "X" or \
-                field[1][6] == field[2][4] == field[3][2] == "X":
+        if state.game_field[1][2] == state.game_field[2][4] == state.game_field[3][6] == "X" or \
+                state.game_field[1][6] == state.game_field[2][4] == state.game_field[3][2] == "X":
             print("X wins")
             break
 
-        elif field[1][2] == field[2][4] == field[3][6] == "O" or \
-                field[1][6] == field[2][4] == field[3][2] == "O":
+        elif state.game_field[1][2] == state.game_field[2][4] == state.game_field[3][6] == "O" or \
+                state.game_field[1][6] == state.game_field[2][4] == state.game_field[3][2] == "O":
             print("O wins")
             break
 
         break
 
+    return victory
 
-if begin[1] == "easy":
 
-    if begin[2] == "easy":
+move_handlers = {
+    'user': user_move,
+    'easy': easy_move,
+}
 
-        easy_first_move(game_field)
-        moves_count = 1
-        victory = False
 
-        while moves_count < 9:
-            easy_move(game_field)
-            if moves_count >= 5:
-                victory_rules(game_field)
-                if victory is True:
-                    break
+def second_version():
+    player1_move = move_handlers[params[1]]
+    player2_move = move_handlers[params[2]]
 
-    elif begin[2] == "user":
+    # null check?
 
-        easy_first_move(game_field)
-        moves_count = 1
-        victory = False
+    game_state = GameState()
 
-        while moves_count < 9:
-            user_move(game_field)
-            if moves_count >= 5:
-                victory_rules(game_field)
-                if victory is True:
-                    break
-            easy_move(game_field)
-            if moves_count >= 5:
-                victory_rules(game_field)
-                if victory is True:
-                    break
+    while game_state.move_count < 8:
+        print(game_state.move_count)
+        player1_move(game_state)
+        game_state.move_count += 1
 
-elif begin[1] == "user":
+        if victory_rules(game_state):
+            print("Someone won")
+            return
 
-    if begin[2] == "easy":
-        print_field(game_field)
+        print(game_state.move_count)
+        player2_move(game_state)
+        game_state.move_count += 1
 
-        first_user_move(game_field)
-        print_field(game_field)
-        moves_count = 1
-        victory = False
+        if victory_rules(game_state):
+            print("Someone won")
+            return
 
-        while moves_count < 9:
-            easy_move(game_field)
-            if moves_count >= 5:
-                victory_rules(game_field)
-                if victory is True:
-                    break
-            user_move(game_field)
-            if moves_count >= 5:
-                victory_rules(game_field)
-                if victory is True:
-                    break
 
-    elif begin[2] == "user":
-        print_field(game_field)
-
-        first_user_move(game_field)
-        print_field(game_field)
-        moves_count = 1
-        victory = False
-
-        while moves_count < 9:
-            user_move(game_field)
-            if moves_count >= 5:
-                victory_rules(game_field)
-                if victory is True:
-                    break
+second_version()
