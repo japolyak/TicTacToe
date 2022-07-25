@@ -14,6 +14,12 @@ class GameState:
     medium_y = 0
 
 
+class VictoryRules:
+
+    def __init__(self, field):
+        self.field = field
+
+
 while True:
     params = input("Input command: ").split()
 
@@ -215,7 +221,7 @@ def victory_rules(state):
 
         trans_field = np.transpose(state.game_field)
 
-        for i in range(0, 3):  # possible vertial check
+        for i in range(0, 3):  # vertial check
             row = trans_field[i]
             if row[0] == " " or row[1] == " " or row[2] == " ":
                 pass
