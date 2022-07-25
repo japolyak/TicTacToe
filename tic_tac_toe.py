@@ -1,4 +1,5 @@
 from random import randrange
+import numpy as np
 
 
 class GameState:
@@ -196,7 +197,7 @@ def user_move(state):
             break
 
 
-def victory_rules(state):  # bug with vertical rule
+def victory_rules(state):
     while True:
 
         for i in range(0, 3):  # horizontal check
@@ -212,14 +213,18 @@ def victory_rules(state):  # bug with vertical rule
                     print("O wins")
                     return True
 
-        for i in range(0, 3):  # verical check
-            if state.game_field[0][i] == " " or state.game_field[1][i] == " " or state.game_field[2][i] == " ":
+        trans_field = np.transpose(state.game_field)
+
+        for i in range(0, 3):  # possible vertial check
+            row = trans_field[i]
+            if row[0] == " " or row[1] == " " or row[2] == " ":
                 pass
             else:
-                if state.game_field[0][i] == state.game_field[1][i] == state.game_field[2][i] == "X":
+                if row[0] == row[1] == row[2] == "X":
                     print("X wins")
                     return True
-                elif state.game_field[0][i] == state.game_field[1][i] == state.game_field[2][i] == "O":
+
+                elif row[0] == row[1] == row[2] == "O":
                     print("O wins")
                     return True
 
