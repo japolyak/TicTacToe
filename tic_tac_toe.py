@@ -168,7 +168,93 @@ def medium_move(state):  # medium computer move
 
 
 def hard_move(state):
-    print("Will be")
+
+    xod = "X"
+    if state.move_count % 2 == 1:
+        xod = "O"
+
+    s_board = state.game_field
+    u_board = []
+
+    for i in s_board:
+        for j in i:
+            u_board.append(j)
+
+    for i, j in enumerate(u_board):
+        if j == " ":
+            u_board[i] = i
+
+    hu_move = "O"
+    ai_move = "X"
+
+    def emptyindexies(board):
+        return [k for k in board if k != "X" and k != "O"]
+
+    def rules(cell, player):
+        if ((cell[0] == cell[1] == cell[2] == player) or (cell[3] == cell[4] == cell[5] == player) or
+                (cell[6] == cell[7] == cell[8] == player) or (cell[0] == cell[3] == cell[6] == player) or
+                (cell[1] == cell[4] == cell[7] == player) or (cell[2] == cell[5] == cell[8] == player) or
+                (cell[0] == cell[4] == cell[8] == player) or (cell[2] == cell[4] == cell[6] == player)):
+
+            return True
+        else:
+            return False
+
+    def minimax(new_board, player):
+        availspots = emptyindexies(new_board)
+
+        if rules(new_board, hu_move):
+            return {"score": -10}
+        elif rules(new_board, ai_move):
+            return {"score": 10}
+        elif not availspots:
+            return {"score": 0}
+
+        moves = []
+
+        for i, j in enumerate(availspots):
+            move = {}
+            move["index"] = j
+
+            new_board[j] = player
+
+            if player == ai_move:
+                result = minimax(new_board, hu_move)
+                move["score"] = result["score"]
+            else:
+                result = minimax(new_board, ai_move)
+                move["score"] = result["score"]
+
+            new_board[j] = j
+
+            moves.append(move)
+
+        best_move = 0
+        if player == ai_move:
+            best_score = -10000
+            for i in range(0, len(moves)):
+                if moves[i]["score"] > best_score:
+                    best_score = moves[i]["score"]
+                    best_move = i
+
+        else:
+            best_score = 10000
+            for i in range(0, len(moves)):
+                if moves[i]["score"] < best_score:
+                    best_score = moves[i]["score"]
+                    best_move = i
+
+        return moves[best_move]
+
+    move = minimax(u_board, xod)["index"]
+
+    x = move // 3
+    y = move - 3 * x
+
+    print("Making move level \"hard\"")
+
+    state.game_field[x][y] = xod
+    print_field(state)
 
 
 def user_move(state):
